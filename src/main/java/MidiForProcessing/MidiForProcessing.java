@@ -1,4 +1,4 @@
-package MidiForSketches;
+package MidiForProcessing;
 
 import java.util.HashMap;
 
@@ -7,19 +7,19 @@ import java.util.HashMap;
  *  variables whose values are controlled by external midi
  *  input.
  */
-public class MidiForSketches {
+public class MidiForProcessing {
     private String[] deviceNames;
     private HashMap<String, MidiDeviceContainer> midiDevices = new HashMap<>();
 
     public static void main(String... args) {
-        MidiForSketches me = new MidiForSketches("bus 1");
+        MidiForProcessing me = new MidiForProcessing("bus 1");
         System.out.println(me.getDevice("bus 1").hasDevice());
         while (true) {
         }
 
     }
 
-    public MidiForSketches(String... devices) {
+    public MidiForProcessing(String... devices) {
         for (String device : devices) {
             this.deviceNames = devices;
             midiDevices.put(device, new MidiDeviceContainer(device));

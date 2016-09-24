@@ -1,4 +1,4 @@
-package MidiForSketches;
+package MidiForProcessing;
 
 /**
  * Each midi message carries a byte representing its status. This enum allows
