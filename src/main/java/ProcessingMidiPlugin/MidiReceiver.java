@@ -1,4 +1,4 @@
-package MidiExtension;
+package ProcessingMidiPlugin;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
@@ -6,6 +6,12 @@ import javax.sound.midi.ShortMessage;
 
 import java.util.Optional;
 
+/**
+ * Primary class that exists as the boundary between our listener and the actual
+ * midi device. When we receive a message on the midi bus, we "send" a midi short
+ * message, the values of which we store in a fixed length array representing the
+ * 128 possible midi cc channels.
+ */
 public class MidiReceiver implements Receiver {
     private boolean debug = false;
     private ShortMessage[] channels = new ShortMessage[128];
