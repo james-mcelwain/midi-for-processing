@@ -26,6 +26,7 @@ public class MidiReceiver implements Receiver {
 
     public void send(MidiMessage midiMessage, long timeStamp) {
         ShortMessage msg = (ShortMessage) midiMessage;
+        debug(msg, timeStamp);
         channels[msg.getData1()] = msg;
     }
 
@@ -35,6 +36,7 @@ public class MidiReceiver implements Receiver {
     }
 
     private static void debug(ShortMessage msg, long time) {
-        System.out.println("[" + time + "]: " + msg.toString());
+        System.out.println("[" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
+                " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + msg.getStatus());
     }
 }

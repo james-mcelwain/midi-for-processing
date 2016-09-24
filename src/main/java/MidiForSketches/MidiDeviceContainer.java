@@ -40,6 +40,24 @@ public class MidiDeviceContainer {
 
                 break;
             }
+
+            System.out.println(infoName);
+        }
+
+        if (_midiDevice.isPresent() && !_midiDevice.get().isOpen()) {
+            try {
+                _midiDevice.get().open();
+            } catch (MidiUnavailableException muex) {
+                System.out.println("Unable to open device " + name);
+            }
+        }
+
+        if (_midiDevice.isPresent()) {
+            try {
+                _midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(true));
+            } catch (MidiUnavailableException muex) {
+                System.out.println("Midi device unavailable " + name);
+            }
         }
 
         return _midiDevice;
