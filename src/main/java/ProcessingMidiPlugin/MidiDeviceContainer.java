@@ -11,9 +11,15 @@ import java.util.Optional;
  * particular named midi device.
  */
 public class MidiDeviceContainer {
+    private String name;
     private Optional<MidiDevice> midiDevice;
 
     public MidiDeviceContainer(String name) {
+        this.name = name;
+        midiDevice = locateDevice(name);
+    }
+
+    private static Optional<MidiDevice> locateDevice(String name) {
         /**
          * Locates a Midi device with supplied name.
          * NB: We break the loop as duplicate devices sometimes appear in error
@@ -21,19 +27,30 @@ public class MidiDeviceContainer {
          * works.
          */
 
+        Optional<MidiDevice> _midiDevice = Optional.empty();
+
         for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
             String infoName = info.getName().toLowerCase();
             if (infoName.equals((name.toLowerCase()))) {
                 try {
-                    midiDevice = Optional.of(MidiSystem.getMidiDevice(info));
-                    System.out.println("Connected to " + info.getName());
+                    _midiDevice = Optional.of(MidiSystem.getMidiDevice(info));
                 } catch (MidiUnavailableException muex) {
-                    midiDevice = Optional.empty();
+                    System.out.println("Can't locate device " + name);
                 }
 
                 break;
             }
         }
+
+        return _midiDevice;
+    }
+
+    public void connect() {
+        this.midiDevice = locateDevice(this.name);
+    }
+
+    public boolean hasDevice() {
+        return midiDevice.isPresent();
     }
 
     public Optional<MidiDevice> getMidiDevice() {
