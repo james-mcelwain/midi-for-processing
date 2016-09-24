@@ -36,7 +36,12 @@ public class MidiReceiver implements Receiver {
     }
 
     private static void debug(ShortMessage msg, long time) {
-        System.out.println("[" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
-                " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + MIDI_STATUS.getStatus(msg.getStatus()).name());
+        if (_status(msg) != MIDI_STATUS.Clock) {
+            System.out.println("[" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
+                    " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + _status(msg).name());
+        }
+    }
+    private static MIDI_STATUS _status(ShortMessage msg) {
+        return MIDI_STATUS.getStatus(msg.getStatus());
     }
 }
