@@ -1,4 +1,4 @@
-package ProcessingMidiPlugin;
+package MidiForSketches;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiDevice;

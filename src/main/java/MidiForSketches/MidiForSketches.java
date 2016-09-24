@@ -1,4 +1,4 @@
-package ProcessingMidiPlugin;
+package MidiForSketches;
 
 import java.util.HashMap;
 
@@ -7,10 +7,10 @@ import java.util.HashMap;
  *  variables whose values are controlled by external midi
  *  input.
         */
-public class ProcessingMidiPlugin {
+public class MidiForSketches {
    private HashMap<String, MidiDeviceContainer> midiDevices = new HashMap<>();
 
-   public ProcessingMidiPlugin(String... devices) {
+   public MidiForSketches(String... devices) {
       for (String device : devices) {
          midiDevices.put(device, new MidiDeviceContainer(device));
       }
