@@ -85,16 +85,17 @@ public class MidiDeviceContainer {
     public void receiveMessage(ShortMessage msg) {
         for (Listener listener : listeners) {
             if (listener.getStatus() != null &&
-                    listener.getStatus() != MIDI_STATUS.status(msg)) {
+                listener.getStatus() != MIDI_STATUS.status(msg)) {
                 break;
             }
 
             if (listener.getStatus() == MIDI_STATUS.ControlChange &&
-                    listener.getCC() != msg.getData1()) {
+                listener.getCC() != msg.getData1()) {
                 break;
             }
 
-            if (listener.getChannel() != msg.getChannel()) {
+            // We are using 0 as a default channel
+            if (listener.getChannel() != 0 && listener.getChannel() != msg.getChannel()) {
                 break;
             }
 
