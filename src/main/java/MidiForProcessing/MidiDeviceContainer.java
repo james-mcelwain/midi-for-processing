@@ -3,8 +3,10 @@ package MidiForProcessing;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 
 import java.util.Optional;
+import java.util.ArrayList;
 
 /**
  * Deals with initialization logic related to obtaining a listener for a
@@ -13,13 +15,14 @@ import java.util.Optional;
 public class MidiDeviceContainer {
     private String name;
     private Optional<MidiDevice> midiDevice;
+    private ArrayList<Listener> listeners = new ArrayList<>();
 
     public MidiDeviceContainer(String name) {
         this.name = name;
         midiDevice = locateDevice(name);
     }
 
-    private static Optional<MidiDevice> locateDevice(String name) {
+    private Optional<MidiDevice> locateDevice(String name) {
         /**
          * Locates a Midi device with supplied name.
          * NB: We break the loop as duplicate devices sometimes appear in error
@@ -54,7 +57,7 @@ public class MidiDeviceContainer {
 
         if (_midiDevice.isPresent()) {
             try {
-                _midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(true));
+                _midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(this, true));
             } catch (MidiUnavailableException muex) {
                 System.out.println("Midi device unavailable " + name);
             }
@@ -73,5 +76,30 @@ public class MidiDeviceContainer {
 
     public Optional<MidiDevice> getMidiDevice() {
         return this.midiDevice;
+    }
+
+    public void registerListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void receiveMessage(ShortMessage msg) {
+        for (Listener listener : listeners) {
+            if (listener.getStatus() != null &&
+                    listener.getStatus() != MIDI_STATUS.status(msg)) {
+                break;
+            }
+
+            if (listener.getStatus() == MIDI_STATUS.ControlChange &&
+                    listener.getCC() != msg.getData1()) {
+                break;
+            }
+
+            if (listener.getChannel() != msg.getChannel()) {
+                break;
+            }
+
+            listener.send(msg);
+        }
+
     }
 }

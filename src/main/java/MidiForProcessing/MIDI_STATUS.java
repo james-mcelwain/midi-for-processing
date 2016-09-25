@@ -1,5 +1,7 @@
 package MidiForProcessing;
 
+import javax.sound.midi.ShortMessage;
+
 /**
  * Each midi message carries a byte representing its status. This enum allows
  * us to represent that status.
@@ -32,7 +34,7 @@ public enum MIDI_STATUS {
         this.value = value;
     }
 
-    public static MIDI_STATUS getStatus(int statusCode) {
+    public static MIDI_STATUS status(int statusCode) {
         for(MIDI_STATUS value : MIDI_STATUS.values()) {
             if (value.getValue() == statusCode) {
                 return value;
@@ -44,5 +46,9 @@ public enum MIDI_STATUS {
 
     public int getValue() {
         return value;
+    }
+
+    public static MIDI_STATUS status(ShortMessage msg) {
+       return MIDI_STATUS.status(msg.getStatus());
     }
 }

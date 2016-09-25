@@ -13,10 +13,12 @@ import java.util.Optional;
  * 128 possible midi cc channels.
  */
 public class MidiReceiver implements Receiver {
+    private MidiDeviceContainer container;
     private boolean debug = false;
-    private ShortMessage[] channels = new ShortMessage[128];
+    private int count = 0;
 
-    public MidiReceiver(boolean debug) {
+    public MidiReceiver(MidiDeviceContainer container, boolean debug) {
+        this.container = container;
         this.debug = debug;
     }
 
@@ -27,21 +29,17 @@ public class MidiReceiver implements Receiver {
     public void send(MidiMessage midiMessage, long timeStamp) {
         ShortMessage msg = (ShortMessage) midiMessage;
         debug(msg, timeStamp);
-        channels[msg.getData1()] = msg;
+        container.receiveMessage(msg);
     }
 
-    public Optional<ShortMessage> get(int channel) {
-        Optional<ShortMessage> msg = Optional.of(channels[channel]);
-        return msg;
-    }
 
-    private static void debug(ShortMessage msg, long time) {
-        if (_status(msg) != MIDI_STATUS.Clock) {
-            System.out.println("[" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
-                    " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + _status(msg).name());
+
+    private void debug(ShortMessage msg, long time) {
+        if (MIDI_STATUS.status(msg) != MIDI_STATUS.Clock) {
+            System.out.println("#" + this.count + " [" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
+                    " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + MIDI_STATUS.status(msg).name());
+            this.count ++;
         }
-    }
-    private static MIDI_STATUS _status(ShortMessage msg) {
-        return MIDI_STATUS.getStatus(msg.getStatus());
+
     }
 }
