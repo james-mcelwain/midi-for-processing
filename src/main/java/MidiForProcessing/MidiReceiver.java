@@ -12,12 +12,12 @@ import java.util.Optional;
  * message, the values of which we store in a fixed length array representing the
  * 128 possible midi cc channels.
  */
-public class MidiReceiver implements Receiver {
+class MidiReceiver implements Receiver {
     private MidiDeviceContainer container;
     private boolean debug = false;
     private int count = 0;
 
-    public MidiReceiver(MidiDeviceContainer container, boolean debug) {
+    MidiReceiver(MidiDeviceContainer container, boolean debug) {
         this.container = container;
         this.debug = debug;
     }
@@ -31,8 +31,6 @@ public class MidiReceiver implements Receiver {
         debug(msg, timeStamp);
         container.receiveMessage(msg);
     }
-
-
 
     private void debug(ShortMessage msg, long time) {
         if (MIDI_STATUS.status(msg) != MIDI_STATUS.Clock) {

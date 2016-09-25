@@ -2,7 +2,7 @@ package MidiForProcessing;
 
 import javax.sound.midi.ShortMessage;
 
-public interface Listener {
+interface Listener {
     // Criteria
     int getChannel();
     int getCC();

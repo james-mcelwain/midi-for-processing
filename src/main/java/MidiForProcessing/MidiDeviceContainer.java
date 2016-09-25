@@ -12,12 +12,12 @@ import java.util.ArrayList;
  * Deals with initialization logic related to obtaining a listener for a
  * particular named midi device.
  */
-public class MidiDeviceContainer {
+class MidiDeviceContainer {
     private String name;
     private Optional<MidiDevice> midiDevice;
     private ArrayList<Listener> listeners = new ArrayList<>();
 
-    public MidiDeviceContainer(String name) {
+    MidiDeviceContainer(String name) {
         this.name = name;
         midiDevice = locateDevice(name);
     }

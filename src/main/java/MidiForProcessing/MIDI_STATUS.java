@@ -6,7 +6,7 @@ import javax.sound.midi.ShortMessage;
  * Each midi message carries a byte representing its status. This enum allows
  * us to represent that status.
  */
-public enum MIDI_STATUS {
+enum MIDI_STATUS {
     None(0),
     NoteOff(128),
     NoteOn(144),
