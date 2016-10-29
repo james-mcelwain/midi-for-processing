@@ -5,8 +5,10 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 /**
  * Deals with initialization logic related to obtaining a listener for a
@@ -22,6 +24,15 @@ class MidiDeviceContainer {
         midiDevice = locateDevice(name);
     }
 
+    private static MidiDevice unsafeGetMidiDevice(MidiDevice.Info info) {
+        try {
+            return MidiSystem.getMidiDevice(info);
+        } catch (MidiUnavailableException muex) {
+            System.out.println("MUEX: " + muex);
+            return null;
+        }
+    }
+
     private Optional<MidiDevice> locateDevice(String name) {
         /**
          * Locates a Midi device with supplied name.
@@ -30,40 +41,28 @@ class MidiDeviceContainer {
          * works.
          */
 
-        Optional<MidiDevice> _midiDevice = Optional.empty();
+        Optional<MidiDevice> midiDevice = Stream.of(MidiSystem.getMidiDeviceInfo())
+                .filter(x -> x.getName().contains(name))
+                .map(MidiDeviceContainer::unsafeGetMidiDevice)
+                .findFirst();
 
-        for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
-            String infoName = info.getName().toLowerCase();
-            if (infoName.equals((name.toLowerCase()))) {
-                try {
-                    _midiDevice = Optional.of(MidiSystem.getMidiDevice(info));
-                } catch (MidiUnavailableException muex) {
-                    System.out.println("Can't locate device " + name);
-                }
-
-                break;
-            }
-
-            System.out.println(infoName);
-        }
-
-        if (_midiDevice.isPresent() && !_midiDevice.get().isOpen()) {
+        if (midiDevice.isPresent() && !midiDevice.get().isOpen()) {
             try {
-                _midiDevice.get().open();
+                midiDevice.get().open();
             } catch (MidiUnavailableException muex) {
                 System.out.println("Unable to open device " + name);
             }
         }
 
-        if (_midiDevice.isPresent()) {
+        if (midiDevice.isPresent()) {
             try {
-                _midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(this, true));
+                midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(this, true));
             } catch (MidiUnavailableException muex) {
                 System.out.println("Midi device unavailable " + name);
             }
         }
 
-        return _midiDevice;
+        return midiDevice;
     }
 
     public void connect() {
@@ -85,12 +84,12 @@ class MidiDeviceContainer {
     public void receiveMessage(ShortMessage msg) {
         for (Listener listener : listeners) {
             if (listener.getStatus() != null &&
-                listener.getStatus() != MIDI_STATUS.status(msg)) {
+                    listener.getStatus() != MIDI_STATUS.status(msg)) {
                 break;
             }
 
             if (listener.getStatus() == MIDI_STATUS.ControlChange &&
-                listener.getCC() != msg.getData1()) {
+                    listener.getCC() != msg.getData1()) {
                 break;
             }
 
