@@ -12,10 +12,6 @@ public class MidiForProcessing {
     private HashMap<String, MidiDeviceContainer> midiDevices = new HashMap<>();
 
     public static void main(String... args) {
-        MidiForProcessing me = new MidiForProcessing("mio");
-        System.out.println(me.getDevice("mio").hasDevice());
-        while (true) {
-        }
 
     }
 
