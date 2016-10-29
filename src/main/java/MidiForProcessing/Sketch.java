@@ -19,31 +19,22 @@ public class Sketch extends PApplet {
             System.out.println("Connected");
         }
 
+
         midi.registerGlobalListener(new Listener() {
             @Override
-            public int getChannel() {
-                return 0;
-            }
-
-            @Override
-            public int getCC() {
-                return 0;
-            }
-
-            @Override
-            public MIDI_STATUS getStatus() {
-                return MIDI_STATUS.NoteOn;
+            public boolean eval(ShortMessage msg) {
+                return msg.getChannel() == 0 && MIDI_STATUS.status(msg) == MIDI_STATUS.NoteOn;
             }
 
             @Override
             public void send(ShortMessage msg) {
-                colors[0] = floor(random(0, 255));
+                System.out.println(msg.getChannel());
             }
         });
     }
 
     public void settings() {
-        size(1920,1080);
+        size(1920, 1080);
     }
 
     public void draw() {
