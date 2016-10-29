@@ -6,7 +6,6 @@ import processing.core.PApplet;
 import javax.sound.midi.ShortMessage;
 
 public class Sketch extends PApplet {
-
     private int[] colors = new int[3];
 
     public Sketch() {
@@ -14,22 +13,13 @@ public class Sketch extends PApplet {
         colors[1] = 100;
         colors[2] = 100;
 
-        MidiForProcessing midi = new MidiForProcessing("mio");
-        if (midi.getDevice("mio").hasDevice()) {
-            System.out.println("Connected");
+        MidiDeviceContainer midi = new MidiDeviceContainer("mio");
+        if (midi.hasDevice()) {
+            System.out.println("Connected!");;
         }
 
-
-        midi.registerGlobalListener(new Listener() {
-            @Override
-            public boolean eval(ShortMessage msg) {
-                return msg.getChannel() == 0 && MIDI_STATUS.status(msg) == MIDI_STATUS.NoteOn;
-            }
-
-            @Override
-            public void send(ShortMessage msg) {
-                System.out.println(msg.getChannel());
-            }
+        midi.registerHandler(x -> {
+            System.out.println(MIDI_STATUS.status(x).toString());
         });
     }
 
@@ -44,4 +34,5 @@ public class Sketch extends PApplet {
     public static void main(String... args) {
         PApplet.main("MidiForProcessing.Sketch");
     }
+
 }

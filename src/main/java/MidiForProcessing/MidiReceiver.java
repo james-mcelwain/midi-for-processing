@@ -4,8 +4,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import java.util.Optional;
-
 /**
  * Primary class that exists as the boundary between our listener and the actual
  * midi device. When we receive a message on the midi bus, we "send" a midi short

@@ -1,13 +1,12 @@
 package MidiForProcessing;
 
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.*;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -17,7 +16,7 @@ import java.util.stream.Stream;
 class MidiDeviceContainer {
     private String name;
     private Optional<MidiDevice> midiDevice;
-    private ArrayList<Listener> listeners = new ArrayList<>();
+    private ArrayList<Consumer> handlers = new ArrayList<>();
 
     MidiDeviceContainer(String name) {
         this.name = name;
@@ -54,6 +53,9 @@ class MidiDeviceContainer {
             }
         }
 
+        /**
+         * Default listener, prints logging, etc.
+         */
         if (midiDevice.isPresent()) {
             try {
                 midiDevice.get().getTransmitter().setReceiver(new MidiReceiver(this, true));
@@ -77,14 +79,11 @@ class MidiDeviceContainer {
         return this.midiDevice;
     }
 
-    public void registerListener(Listener listener) {
-        listeners.add(listener);
+    public void registerHandler(Consumer<ShortMessage> handler) {
+        handlers.add(handler);
     }
 
     public void receiveMessage(ShortMessage msg) {
-        listeners
-                .stream()
-                .filter(x -> x.eval(msg))
-                .forEach(x -> x.send(msg));
+        handlers.forEach(x -> x.accept(msg));
     }
 }
