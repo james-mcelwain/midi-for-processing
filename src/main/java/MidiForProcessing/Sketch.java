@@ -3,8 +3,6 @@ package MidiForProcessing;
 
 import processing.core.PApplet;
 
-import javax.sound.midi.ShortMessage;
-
 public class Sketch extends PApplet {
     private int[] colors = new int[3];
 
@@ -15,7 +13,7 @@ public class Sketch extends PApplet {
 
         MidiDeviceContainer midi = new MidiDeviceContainer("mio");
         if (midi.hasDevice()) {
-            System.out.println("Connected!");;
+            System.out.println("Connected!");
         }
 
         midi.registerHandler(x -> {

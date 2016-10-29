@@ -1,12 +1,12 @@
 package MidiForProcessing;
 
-import javax.sound.midi.*;
-
-import java.util.Arrays;
-import java.util.Optional;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -15,12 +15,13 @@ import java.util.stream.Stream;
  */
 class MidiDeviceContainer {
     private String name;
-    private Optional<MidiDevice> midiDevice;
+    private MidiDevice midiDevice;
     private ArrayList<Consumer> handlers = new ArrayList<>();
 
     MidiDeviceContainer(String name) {
         this.name = name;
-        midiDevice = locateDevice(name);
+        locateDevice(name)
+                .ifPresent(x -> midiDevice = x);
     }
 
     private static MidiDevice unsafeGetMidiDevice(MidiDevice.Info info) {
@@ -68,22 +69,23 @@ class MidiDeviceContainer {
     }
 
     public void connect() {
-        this.midiDevice = locateDevice(this.name);
+        locateDevice(this.name)
+        .ifPresent(x -> midiDevice = x);
     }
 
-    public boolean hasDevice() {
-        return midiDevice.isPresent();
+    boolean hasDevice() {
+        return Optional.ofNullable(midiDevice).isPresent();
     }
 
-    public Optional<MidiDevice> getMidiDevice() {
-        return this.midiDevice;
+    Optional<MidiDevice> getMidiDevice() {
+        return Optional.ofNullable(midiDevice);
     }
 
-    public void registerHandler(Consumer<ShortMessage> handler) {
+    void registerHandler(Consumer<ShortMessage> handler) {
         handlers.add(handler);
     }
 
-    public void receiveMessage(ShortMessage msg) {
+    void receiveMessage(ShortMessage msg) {
         handlers.forEach(x -> x.accept(msg));
     }
 }
