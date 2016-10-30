@@ -41,6 +41,10 @@ public class Sketch extends PApplet {
         registerSketch("main", sketch -> {
             sketch.background(random(0, 255));
         });
+
+        registerSketch("another", sketch -> {
+            sketch.background(255, 0, 0);
+        });
     }
 
     public void settings() {
@@ -49,7 +53,14 @@ public class Sketch extends PApplet {
 
     public void draw() {
         frameRate(1);
-        run("main");
+        run(currentSketch);
+    }
+
+    private String currentSketch = "main";
+    public void keyPressed() {
+        if (key == '1') {
+            currentSketch = "another";
+        }
     }
 
     public void run(String sketch) {
