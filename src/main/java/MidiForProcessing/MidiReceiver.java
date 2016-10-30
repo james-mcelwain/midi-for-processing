@@ -21,7 +21,7 @@ class MidiReceiver implements Receiver {
     }
 
     public void close() {
-        System.out.println("MidiReceiver#close called");
+        System.out.println("MidiReceiver::close called");
     }
 
     public void send(MidiMessage midiMessage, long timeStamp) {
@@ -32,9 +32,9 @@ class MidiReceiver implements Receiver {
 
     private void debug(ShortMessage msg, long time) {
         if (MIDI_STATUS.status(msg) != MIDI_STATUS.Clock) {
+            this.count ++;
             System.out.println("#" + this.count + " [" + time + "]: channel=" + msg.getChannel() + " command=" + msg.getCommand() +
                     " data1=" + msg.getData1() + " data2=" + msg.getData2() + " status=" + MIDI_STATUS.status(msg).name());
-            this.count ++;
         }
 
     }

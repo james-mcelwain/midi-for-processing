@@ -1,36 +1,63 @@
 package MidiForProcessing;
 
-
 import processing.core.PApplet;
 
+import java.util.HashMap;
+import java.util.function.Consumer;
+
 public class Sketch extends PApplet {
-    private int[] colors = new int[3];
+
+    /**
+     * Go!
+     * @param args
+     */
+    public static void main(String... args) {
+        PApplet.main(Sketch.class);
+    }
+
+
+    /**
+     * PRELUDE --
+     * Midi setup, etc.
+     */
+    private int w = 1000;
+    private int h = 500;
+
 
     public Sketch() {
-        colors[0] = 100;
-        colors[1] = 100;
-        colors[2] = 100;
 
         MidiDeviceContainer midi = new MidiDeviceContainer("mio");
         if (midi.hasDevice()) {
             System.out.println("Connected!");
         }
 
+        /**
+         * We can register as many handlers as we want to manipulate state internal to sketch.
+         */
         midi.registerHandler(x -> {
-            System.out.println(MIDI_STATUS.status(x).toString());
+            if (MIDI_STATUS.status(x.getStatus()).equals(MIDI_STATUS.NoteOn)) { System.out.println(x.getChannel()); }
+        });
+
+        registerSketch("main", sketch -> {
+            sketch.background(random(0, 255));
         });
     }
 
     public void settings() {
-        size(1920, 1080);
+        size(w, h);
     }
 
     public void draw() {
-        background(colors[0]);
+        frameRate(1);
+        run("main");
     }
 
-    public static void main(String... args) {
-        PApplet.main("MidiForProcessing.Sketch");
+    public void run(String sketch) {
+        sketches.get(sketch).accept(this);
     }
 
+    private HashMap<String, Consumer<PApplet>>  sketches = new HashMap<>();
+    public void registerSketch(String name, Consumer<PApplet> fn) {
+        sketches.put(name, fn);
+    }
 }
